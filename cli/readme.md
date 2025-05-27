@@ -1,0 +1,4 @@
+
+```bash
+php ./index.php
+```

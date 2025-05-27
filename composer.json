@@ -1,0 +1,25 @@
+{
+    "name": "rxkk/lib",
+    "description": "My tool-set",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Rxkk\\Lib\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mysqli": "*",
+        "monolog/monolog": "*",
+        "vlucas/phpdotenv": "*"
+    },
+    "archive": {
+        "exclude": [
+            "cli/",
+            "tests/"
+        ]
+    }
+}
