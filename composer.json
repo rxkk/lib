@@ -14,7 +14,8 @@
         "ext-json": "*",
         "ext-mysqli": "*",
         "monolog/monolog": "*",
-        "vlucas/phpdotenv": "*"
+        "vlucas/phpdotenv": "*",
+        "psr/log": "*"
     },
     "archive": {
         "exclude": [
