@@ -8,6 +8,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Psr\Log\LogLevel;
+use Rxkk\Lib\Env;
 
 class Logger {
     /** @var array<string, \Monolog\Logger> */
@@ -72,7 +73,7 @@ class Logger {
         string $channel,
         ?string $level = null
     ): \Psr\Log\LoggerInterface {
-        $level ??= \Rxkk\Lib\Env::get('LOG_LEVEL', 'debug');
+        $level ??= Env::get('LOG_LEVEL', 'debug');
 
         // 1) Monolog logger + handler
         $monolog  = new \Monolog\Logger($channel);
@@ -126,7 +127,7 @@ class Logger {
         $logger = new \Monolog\Logger($channel);
 
         // Берём уровень из аргумента или из окружения LOG_LEVEL (PSR-3 строки допустимы)
-        $minLevel ??= getenv('LOG_LEVEL') ?: LogLevel::INFO;
+        $minLevel ??= Env::get('LOG_LEVEL') ?: LogLevel::INFO;
         $threshold = self::toLevel($minLevel);
 
         $handler = new StreamHandler('php://stdout', $threshold, true);
