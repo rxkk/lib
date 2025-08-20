@@ -41,6 +41,12 @@ class Logger {
             }
         }
 
+        // if have default
+        if (isset(self::$loggers['default'])) {
+            return self::$loggers['default'];
+        }
+
+        // fallback to null logger
         $logger = self::createLoggerNull();
         return self::$loggers['default'] = $logger;
     }
