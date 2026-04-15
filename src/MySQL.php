@@ -3,13 +3,17 @@
 namespace Rxkk\Lib;
 
 use mysqli;
+use Rxkk\Lib\Logger\Logger;
 
 class MySQL {
 
     /** @var mysqli */
     public $connect;
 
+    private \Monolog\Logger $logger;
+
     public function __construct(mysqli $connect) {
+        $this->logger = Logger::getLogger()->withName('MySQL');
         $this->connect = $connect;
     }
 
@@ -30,9 +34,7 @@ class MySQL {
     }
 
     public function query($sql): array {
-//        if (true) {
-//            Console::log('SQL: ' . $sql);
-//        }
+        $this->logger->debug('SQL: ' . $sql);
 
         try {
             $q = $this->connect->query($sql);
@@ -62,6 +64,9 @@ class MySQL {
         return self::getSingleton()->query($sql);
     }
 
+    /**
+     * @return self
+     */
     public static function getSingleton() {
         static $instances = [];
         $classname = get_called_class();

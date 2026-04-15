@@ -1,4 +1,4 @@
 
 ```bash
-php ./index.php
+cd .. ; php ./cli/index.php
 ```
