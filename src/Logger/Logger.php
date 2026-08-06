@@ -15,7 +15,7 @@ class Logger {
     private static array $loggers = [];
 
     /**
-     * Установить PSR-3 логгер для имени (канала). Без имени — логгер по умолчанию.
+     * Set a PSR-3 logger for a name (channel). Without a name it becomes the default logger.
      */
     public static function setLogger(\Monolog\Logger $logger, ?string $name = null): void {
         $key = self::normalizeName($name);
@@ -28,8 +28,8 @@ class Logger {
     }
 
     /**
-     * Получить логгер по приоритетному списку имён.
-     * Пример: getLogger(['rxkk', 'lib']) — сначала 'rxkk', потом 'lib', затем fallback 'default'.
+     * Get a logger by a priority-ordered list of names.
+     * Example: getLogger(['rxkk', 'lib']) — tries 'rxkk' first, then 'lib', then falls back to 'default'.
      */
     public static function getLogger(string|array|null $names = null): \Monolog\Logger {
         $candidates = is_array($names) ? $names : (is_string($names) ? [$names] : ['default']);
@@ -46,14 +46,14 @@ class Logger {
     }
 
     /**
-     * Проверить, установлен ли логгер с данным именем (или default при null/пустом).
+     * Check whether a logger with the given name is set (or the default one for null/empty).
      */
     public static function hasLogger(?string $name = null): bool {
         return isset(self::$loggers[self::normalizeName($name)]);
     }
 
     /**
-     * Удалить конкретный логгер (или все).
+     * Remove a specific logger (or all of them).
      */
     public static function clear(?string $name = null): void {
         if ($name === null) {
@@ -64,10 +64,10 @@ class Logger {
     }
 
     /**
-     * «Темплейтный» цветной stdout-логгер
+     * "Template" colored stdout logger
      *
-     * @param string $channel Имя канала (актуально для Monolog)
-     * @param string $level   Минимальный уровень ('debug'..'emergency')
+     * @param string $channel Channel name (relevant for Monolog)
+     * @param string $level   Minimum level ('debug'..'emergency')
      */
     public static function getNewLoggerWithStdoutColorConsole(
         string $channel,
@@ -80,7 +80,7 @@ class Logger {
         $minLevel = Level::fromName(strtoupper($level));
         $handler  = new StreamHandler('php://stdout', $minLevel);
 
-        // 3) Фоллбек: свой LineFormatter + процессор, который добавляет цветной уровень
+        // 3) Fallback: own LineFormatter + a processor that adds the colored level
         $formatter = new LineFormatter(
             "[%datetime%] %channel%.%extra.level_colored%: %message% %context% %extra%\n",
             'Y-m-d H:i:s',
@@ -89,7 +89,7 @@ class Logger {
         );
         $handler->setFormatter($formatter);
 
-        // Процессор для Monolog v3 (LogRecord-объект)
+        // Processor for Monolog v3 (LogRecord object)
         $colors = [
             'DEBUG'     => "\033[36m", // cyan
             'INFO'      => "\033[32m", // green
@@ -103,14 +103,14 @@ class Logger {
         $reset = "\033[0m";
 
         $monolog->pushProcessor(function ($record) use ($colors, $reset) {
-            // Monolog 3: $record — это Monolog\LogRecord (иммутабельный)
+            // Monolog 3: $record is a Monolog\LogRecord (immutable)
             if ($record instanceof \Monolog\LogRecord) {
                 $lvl = $record->level->getName(); // e.g. INFO
                 $extra = $record->extra;
                 $extra['level_colored'] = ($colors[$lvl] ?? '') . $lvl . $reset;
                 return $record->with(extra: $extra);
             }
-            // На всякий случай: поддержка старых версий (массив)
+            // Just in case: support for older versions (array)
             $lvl = $record['level_name'] ?? 'INFO';
             $record['extra']['level_colored'] = ($colors[$lvl] ?? '') . $lvl . $reset;
             return $record;
@@ -126,21 +126,21 @@ class Logger {
     {
         $logger = new \Monolog\Logger($channel);
 
-        // Берём уровень из аргумента или из окружения LOG_LEVEL (PSR-3 строки допустимы)
+        // Take the level from the argument or from the LOG_LEVEL env var (PSR-3 strings are allowed)
         $minLevel ??= Env::get('LOG_LEVEL') ?: LogLevel::INFO;
         $threshold = self::toLevel($minLevel);
 
         $handler = new StreamHandler('php://stdout', $threshold, true);
         $handler->setFormatter(new ColorLineFormatter());
 
-        // Включаем PSR-3 интерполяцию {key} из контекста в message
+        // Enable PSR-3 interpolation of {key} from the context into the message
         $logger->pushProcessor(new PsrLogMessageProcessor());
 
         $logger->pushHandler($handler);
         return $logger;
     }
 
-    /** Поддержка строк PSR-3 и чисел; по умолчанию INFO */
+    /** Supports PSR-3 strings and integers; defaults to INFO */
     private static function toLevel(string|int $level): Level
     {
         if (is_int($level)) {

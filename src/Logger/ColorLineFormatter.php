@@ -8,21 +8,21 @@ use Monolog\LogRecord;
 class ColorLineFormatter implements FormatterInterface {
     /** @var array<string,string> */
     private array $colors = [
-        'debug'     => "\033[90m", // серый
-        'info'      => "\033[34m", // синий - говорим о совершенном
-        'notice'    => "\033[32m", // зелёный - говорим об успешном результате
-        'warning'   => "\033[33m", // жёлтый
-        'error'     => "\033[31m", // красный
-        'critical'  => "\033[35m", // пурпурный
-        'alert'     => "\033[95m", // ярко-пурпурный
-        'emergency' => "\033[91m", // ярко-красный
+        'debug'     => "\033[90m", // gray
+        'info'      => "\033[34m", // blue - reporting a completed action
+        'notice'    => "\033[32m", // green - reporting a successful result
+        'warning'   => "\033[33m", // yellow
+        'error'     => "\033[31m", // red
+        'critical'  => "\033[35m", // magenta
+        'alert'     => "\033[95m", // bright magenta
+        'emergency' => "\033[91m", // bright red
     ];
     private string $reset = "\033[0m";
 
     public function format(LogRecord $record): string {
         $ts        = $record->datetime->format('Y-m-d H:i:s');
         $levelName = strtoupper($record->level->getName()); // DEBUG/INFO/...
-        // Сообщение уже интерполировано PsrLogMessageProcessor (см. фабрику ниже)
+        // The message is already interpolated by PsrLogMessageProcessor (see the factory below)
         $msg       = (string) $record->message;
 
 //        $normalizedCtx = $this->normalize($record->context);
@@ -49,7 +49,7 @@ class ColorLineFormatter implements FormatterInterface {
         return implode('', array_map([$this, 'format'], $records));
     }
 
-    /** Приводим контекст к сериализуемому виду, как у тебя в interpolate() */
+    /** Convert the context into a serializable form, same as in interpolate() */
     private function normalize(mixed $val): mixed {
         if ($val instanceof \Throwable) {
             return $val->getMessage();

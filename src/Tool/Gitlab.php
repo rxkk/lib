@@ -43,7 +43,7 @@ class Gitlab {
         return $this->getMergeRequestDiff($projectId, $mrIid);
     }
 
-    /** Получение diff по merge request */
+    /** Fetch the diff of a merge request */
     public function getMergeRequestDiff($projectId, $mrIid) {
         $url = "/api/v4/projects/{$projectId}/merge_requests/{$mrIid}/diffs";
         $data = $this->curlGitlab($url);

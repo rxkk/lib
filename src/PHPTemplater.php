@@ -6,12 +6,12 @@ use InvalidArgumentException;
 
 class PHPTemplater {
     /**
-     * Рендерит PHP-шаблон и возвращает результат как строку.
+     * Render a PHP template and return the result as a string.
      *
-     * @param string $pathToFile Путь до PHP-файла с шаблоном
-     * @param array $vars Ассоциативный массив переменных для шаблона
-     * @return string Сгенерированный текст
-     * @throws InvalidArgumentException Если файл не найден или не читается
+     * @param string $pathToFile Path to the PHP template file
+     * @param array $vars Associative array of variables for the template
+     * @return string Generated text
+     * @throws InvalidArgumentException If the file does not exist or is not readable
      */
     public static function render(string $pathToFile, array $vars = []): string
     {
